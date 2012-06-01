@@ -14,7 +14,7 @@ var server = require( 'http' ).createServer( function( req,res ) {
 	console.log( url );
 	var servedFile = '';
 	try {
-		servedFile = fs.readFileSync( __dirname  + '/node_modules/public' + url ) ;
+		servedFile = fs.readFileSync( __dirname  + '/public' + url ) ;
 	} catch ( err ) { 
 		console.log( err.message );
 	}
