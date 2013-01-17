@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>jQuery UI Dialog - Modal form</title>
 	<link rel="stylesheet" href="development-bundle/themes/base/jquery.ui.all.css">
+	<link rel="stylesheet" type="text/css" href="development-bundle/themes/base/ui.dropdownchecklist.standalone.css">
 	<script src="js/jquery-1.7.1.min.js"></script>
 	<script src="js/waypoints.min.js"></script>
 	<script src="js/external/jquery.bgiframe-2.1.2.js"></script>
@@ -18,6 +19,8 @@
 	<script src="development-bundle/ui/jquery.ui.tabs.js"></script>
 	<script src="development-bundle/ui/jquery.effects.core.js"></script>
 	<script type="text/javascript" src="nowjs/now.js"></script>
+	<script src="js/jquery-ui-1.8.13.custom.min.js"></script>
+	<script src="js/ui.dropdownchecklist-1.4-min.js"></script>
 
 	<style>
 		textarea { width: 100%; padding: 10px; border: 1px solid #bbbbbb; }
@@ -41,30 +44,18 @@
 		.tabs-bottom .ui-tabs-nav li { margin-top: -2px !important; margin-bottom: 1px !important; border-top: none; border-bottom-width: 1px; }
 		.ui-tabs-selected { margin-top: -3px !important; }
 
-		.ui-effects-transfer { border: 0.1em dashed black; }
+		.ui-effects-transfer { border: 0.1em solid black; }
 	</style>
 	
 	<script>
 	$(function() {
 		var mainButtons = [
-			{text: "Invite"
+			{ text: "Invite"
 			, 'class': 'invite-button'
 			, click: function() {
-				// get list of members
-				$(this).effect( "transfer", { to: $("#users-list") }, 1000 );
-				$("#users-list").dialog( "open" );
-
-				//$('#listUpdateMsg').html('<img src="images/loading.gif" title="Updating List...." /> Updating List...');
-				//$.ajax({
-				//	data: "sid="+Math.random()+"&act=remove&list_id="+list_id+"&prod_id="+prod_id,
-				//	url: "ajax/add_to_shooping_list.php",    
-				//	type:"POST",
-				//	success:function(msg){
-				//		var $msgarray = msg.split("|");
-				//		$('#listUpdateMsg').html('<div><div class="err"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 0 0 15px;"></span>'+$msgarray[0]+'</div><br />'+$msgarray[1]+'</div>');
-				//		$( "#dialog-confirm:ui-dialog" ).dialog( "destroy" );
-				//	}
-				//}); //end ajax
+					// get list of members
+					$(this).effect( "transfer", { to: $("#users-list") }, 1000 );
+					$("#users-list").dialog( "open" );
 				}
 			} // end Invite button
 			, {text: "Options"
@@ -73,13 +64,12 @@
 				alert('Options...'); 
 				}
 			} // end Options button
-		] // end mainButtons
-		, commentButtons = [
-			{text: "Clear"
+			, { text: "Clear"
 			, 'class': 'clear-button'
 			, click: function() { 
 				$('#conversation').text( "" );
 				$('#conversation').prepend( "<div id='wp'></div>" );
+				// $('#conversation').scrollTop = $('#conversation').scrollHeight;
 				$('#wp').waypoint(function(event, direction) {
 							if(direction === 'up' ) {
 							now.nextChunk(cursor);
@@ -88,18 +78,26 @@
 
 				}
 			} // end Clear button
-			, {text: "Post comment"
-			, 'class': 'post-comment-button'
-			, click: function() { 
-			   now.distributeMessage($("#comment").val());
-			   $("#comment").val("");
+			, { text: "Post comment"
+				, 'class': 'post-comment-button'
+				, click: function() { 
+			   	now.distributeMessage($("#comment").val());
+			   	$("#comment").val("");
+				}
 			}
-			//, icons: {primary:'ui-icon-gear',secondary:'ui-icon-triangle-1-s'}
-			//, icons: {
-			//	primary: 'ui-icon-disk'
-			//}
-			} // end Post comment
-		] // end commentButtons
+			] // end mainButtons
+			/* Invite existing users to chat *
+			 * a temporary group is allocated for that user */
+		, userInviteButtons = [
+			{ text: "Invite"
+			, 'class': 'invite-button'
+			, click: function() {
+					$(this).effect( "pulsate", { to: $("#form") }, 1000 );
+					$(this).dialog( "close" );
+					now.makeTempGroup( $("#ulist").val() );
+				}
+			} // end Invite button
+		]; // end userInviteButton
 		
 		$( "#form" ).dialog({
 			autoOpen: false
@@ -109,15 +107,13 @@
 			, position: ['center', 35]
 			, buttons: mainButtons
 		});	
-		//remove ui-widget-header
-		//$( ".ui-widget-header " ).remove();
-		//$( " .ui-dialog-titlebar-close, .ui-corner-all").add();
 		$( "#users-list" ).dialog({
 			autoOpen: false
 			, height: 335
 			, width: 400
 			, modal: true
 			, position: ['center', 35]
+			, buttons: userInviteButtons
 		});	
 		$( "#user-form" )
 			.button()
@@ -131,14 +127,14 @@
 		// Add comment...
 		$("#comment, .comment").click(function(){
 			$('#comment').focus().select();
-			$("#form").dialog({buttons: commentButtons});
+			$("#form").dialog({buttons: mainButtons});
 			$( ".post-comment-button" ).button({ icons: {primary:'ui-icon-comment'} });
 			//$( ".clear-button" ).button({ icons: {primary:'ui-icon-refresh'} });
 		}); //Add comment
 
 		$("#conversation, .conversation").click(function(){
 			$('#comment').focus().select();
-			$("#form").dialog({buttons: commentButtons});
+			$("#form").dialog({buttons: mainButtons});
 			//$( ".post-comment-button" ).button({ icons: {primary:'ui-icon-comment'} });
 			$( ".clear-button" ).button({ icons: {primary:'ui-icon-refresh'} });
 		}); //Conversation
@@ -149,6 +145,7 @@
 			$( ".invite-button" ).button({ icons: {primary:'ui-icon-person',secondary:'ui-icon-triangle-1-s'} });
 			$( ".options-button" ).button({ icons: {primary:'ui-icon-gear'} });
 		});
+	console.log( 'set all ' );
 		
 		// Tabs
 		$( "#tabs" ).tabs();
@@ -159,16 +156,22 @@
 		});
 		function updateAllUsers() {
 			console.log( allUsers , '!!!!!!' );
+			$('#ulist').dropdownchecklist("destroy");
 			$.each( allUsers, function(val, text) {
 				console.log( val, text );
 				$('#ulist').append(
 						$('<option></option>').val(text).html(text)
 				);
+						
 			});
+			$('#ulist').dropdownchecklist( { maxDropHeight: 150, width: 150, height:200 } );
 		}
 		$(document).ready(function() {
+			$('#ulist').dropdownchecklist( { maxDropHeight: 150, width: 150, height: 200 } );
 			now.receiveMessage = function( name, message ) {
 				$("#conversation").append( name + ":" + message + "\n" );
+				var text = document.getElementById( "conversation" );
+				text.scrollTop = text.scrollHeight;
 			};
 			now.name = prompt("Name?" );
 			if ( allUsers.length ) {

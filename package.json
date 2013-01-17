@@ -9,12 +9,15 @@
     "url": "git://github.com/nkhine/chat.git"
   },
   "engines": {
-    "node": "~0.6.9"
+    "node": ">=0.8.14"
   },
+  "scripts": {
+     "start": "node app"
+     }
   "dependencies": {
     "now": ">=0.8.0",
-    "redis": ">=0.7.0"
-	
+    "redis": ">=0.7.0",
+    "mongodb": ">=1.0.0"
   },
   "devDependencies": {},
   "optionalDependencies": {}
