@@ -13,11 +13,13 @@
   },
   "scripts": {
      "start": "node app"
-     }
+     },
   "dependencies": {
-    "now": ">=0.8.0",
+    "now": ">=0.8.1",
     "redis": ">=0.7.0",
-    "mongodb": ">=1.0.0"
+    "mongodb": ">=1.0.0",
+    "node-static": ">=0.6.7",
+    "fs": ">=0.0.0"
   },
   "devDependencies": {},
   "optionalDependencies": {}
